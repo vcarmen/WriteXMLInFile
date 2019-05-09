@@ -1,5 +1,6 @@
 # WriteXMLInFile
 
 
-javac Main.java
+javac Main.java 
+
 java Main
