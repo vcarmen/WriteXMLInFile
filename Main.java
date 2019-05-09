@@ -16,20 +16,31 @@ public class Main {
 
     public static void main(String[] args) {
         System.out.println("Hello Program!");
-        Integer numRecords = 1000;
+        Integer numRecords = 500;
         Integer numOfRecordsPerFile = 100;
-        Integer index = 1;
+        Integer firstElement = 1;
+        Integer lastElement = numOfRecordsPerFile;
 
-        for (int i = numOfRecordsPerFile; i <= numRecords; i = i + numOfRecordsPerFile) {
-            CreateXMLData(numOfRecordsPerFile, index);
-            index = i + 1;
+        /*
+         * for (int i = numOfRecordsPerFile; i <= numRecords; i = i +
+         * numOfRecordsPerFile) { CreateXMLData(numOfRecordsPerFile, index); index = i +
+         * 1; }
+         */
+
+        while (lastElement <= numRecords) {
+            CreateXMLData(firstElement, lastElement);
+            firstElement = lastElement + 1;
+            lastElement = lastElement + numOfRecordsPerFile;
+        }
+        if (firstElement <= numRecords) {
+            CreateXMLData(firstElement, numRecords);
         }
 
     }
 
-    public static void CreateXMLData(int numRecords, int index) {
-        System.out.println("Number of records per file: " + numRecords + " starting from: " + index);
+    public static void CreateXMLData(int index, int numRecords) {
         String fileName = "QUALITY." + index + ".xml";
+        System.out.println(fileName + " - Records starting from: " + index + " to " + numRecords);
 
         try {
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -41,7 +52,7 @@ public class Main {
             doc.appendChild(rootElement);
 
             // Quality_Record
-            while (rootElement.getChildNodes().getLength() < numRecords) {
+            while (index <= numRecords) {
 
                 Element quality = doc.createElement("Quality_Record");
 
