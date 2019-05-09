@@ -16,13 +16,21 @@ public class Main {
 
     public static void main(String[] args) {
         System.out.println("Hello Program!");
-        Integer numRecords = 100;
-        CreateXMLData(numRecords);
+        Integer numRecords = 1000;
+        Integer numOfRecordsPerFile = 100;
+        Integer index = 1;
+
+        for (int i = numOfRecordsPerFile; i <= numRecords; i = i + numOfRecordsPerFile) {
+            CreateXMLData(numOfRecordsPerFile, index);
+            index = i + 1;
+        }
+
     }
 
-    public static void CreateXMLData(int numRecords) {
-        System.out.println("It will create a xml object and write in file");
-        String fileName = "QUALITY." + numRecords + ".xml";
+    public static void CreateXMLData(int numRecords, int index) {
+        System.out.println("Number of records per file: " + numRecords + " starting from: " + index);
+        String fileName = "QUALITY." + index + ".xml";
+
         try {
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
@@ -33,26 +41,38 @@ public class Main {
             doc.appendChild(rootElement);
 
             // Quality_Record
-            for (int i = 1; i <= numRecords; i++) {
+            while (rootElement.getChildNodes().getLength() < numRecords) {
 
                 Element quality = doc.createElement("Quality_Record");
 
                 Element quality_id = doc.createElement("Quality_ID");
-                quality_id.setTextContent("QUALITY00" + i);
+                quality_id.setTextContent("QUALITY00" + index);
 
                 Element state_product = doc.createElement("State_Product");
-                state_product.setTextContent("Hand" + i);
+                state_product.setTextContent("Hand" + index);
 
                 Element range_product = doc.createElement("Range_Product");
-                range_product.setTextContent("High" + i);
+                range_product.setTextContent("High" + index);
 
                 quality.appendChild(quality_id);
                 quality.appendChild(state_product);
                 quality.appendChild(range_product);
 
                 rootElement.appendChild(quality);
+
+                index++;
             }
 
+            // Write XML content in file
+            WriteXMLData(doc, fileName);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static void WriteXMLData(Document doc, String fileName) {
+        try {
             // Write XML content in file
             DOMSource source = new DOMSource(doc);
             StreamResult result = new StreamResult(new File(fileName));
@@ -63,9 +83,9 @@ public class Main {
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
             transformer.transform(source, result);
-
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
+
 }
